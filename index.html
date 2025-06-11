@@ -25,6 +25,7 @@
       min-height: 100vh;
       flex-direction: column;
       text-align: center;
+      position: relative;
     }
 
     .click-button {
@@ -57,9 +58,6 @@
       border-radius: 20px;
       box-shadow: 0 0 30px rgba(255, 255, 255, 0.3);
       background: #000;
-      display: flex;
-      align-items: center;
-      justify-content: center;
     }
 
     .carousel img {
@@ -89,13 +87,13 @@
     }
 
     .hearts {
-      position: fixed;
+      position: absolute;
       top: 0;
       left: 0;
       width: 100%;
       height: 100%;
       pointer-events: none;
-      z-index: -1;
+      z-index: 10;
     }
 
     .heart {
@@ -122,13 +120,18 @@
   <div class="container">
     <button class="click-button" onclick="startLove()">❤ Clique</button>
     <div id="content" class="hidden">
+      <!-- CORAÇÕES -->
+      <div class="hearts" id="hearts"></div>
+
+      <!-- MÚSICA -->
       <div class="music-player">
-        <audio controls autoplay loop>
+        <audio id="love-audio" loop>
           <source src="music.mp3" type="audio/mpeg">
           Seu navegador não suporta áudio.
         </audio>
       </div>
 
+      <!-- CARROSSEL -->
       <div class="carousel" id="carousel">
         <img src="img1.jpg" class="active" alt="Foto 1">
         <img src="img2.jpg" alt="Foto 2">
@@ -141,6 +144,7 @@
         <img src="img9.jpg" alt="Foto 9">
       </div>
 
+      <!-- TEXTO -->
       <div class="text">
         <h3>Eu te amo há:</h3>
         <p id="love-time"></p>
@@ -148,14 +152,19 @@
         <p>A cada dia que passa, meu coração se enche mais de carinho e admiração por você. Cada sorriso seu ilumina o meu mundo, e cada abraço me faz sentir que estou exatamente onde deveria estar. Você é a razão dos meus melhores pensamentos, e tudo ao seu lado se torna mais bonito e significativo. Eu te amo para sempre 💜</p>
       </div>
     </div>
-
-    <div class="hearts" id="hearts"></div>
   </div>
 
   <script>
     function startLove() {
       document.querySelector('.click-button').style.display = 'none';
       document.getElementById('content').classList.remove('hidden');
+
+      // Iniciar áudio
+      const audio = document.getElementById('love-audio');
+      audio.play().catch((e) => {
+        console.log("Autoplay bloqueado, interação necessária.");
+      });
+
       startCarousel();
       createHearts();
       updateLoveTime();
