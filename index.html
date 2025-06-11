@@ -10,24 +10,21 @@
       padding: 0;
       box-sizing: border-box;
     }
-
     body {
       background: #0d0d2b;
       font-family: 'Arial', sans-serif;
       color: white;
-      overflow-x: hidden;
+      overflow: hidden;
     }
-
     .container {
       display: flex;
       justify-content: center;
       align-items: center;
-      min-height: 100vh;
+      height: 100vh;
       flex-direction: column;
-      text-align: center;
       position: relative;
+      text-align: center;
     }
-
     .click-button {
       background-color: #8b5cf6;
       color: white;
@@ -39,15 +36,12 @@
       box-shadow: 0 0 20px #a78bfa;
       transition: 0.3s;
     }
-
     .click-button:hover {
       background-color: #a78bfa;
     }
-
     .hidden {
       display: none;
     }
-
     .carousel {
       width: 90vw;
       max-width: 360px;
@@ -57,25 +51,21 @@
       margin: 20px auto;
       border-radius: 20px;
       box-shadow: 0 0 30px rgba(255, 255, 255, 0.3);
-      background: #000;
     }
-
     .carousel img {
       position: absolute;
       width: 100%;
       height: 100%;
       object-fit: cover;
-      display: none;
+      opacity: 0;
+      transition: opacity 1s ease-in-out;
     }
-
     .carousel img.active {
-      display: block;
+      opacity: 1;
     }
-
     .music-player {
       margin-bottom: 20px;
     }
-
     .text {
       max-width: 90vw;
       margin-top: 10px;
@@ -85,9 +75,8 @@
       padding: 15px;
       border-radius: 10px;
     }
-
     .hearts {
-      position: absolute;
+      position: fixed;
       top: 0;
       left: 0;
       width: 100%;
@@ -95,15 +84,14 @@
       pointer-events: none;
       z-index: 10;
     }
-
     .heart {
       position: absolute;
       width: 20px;
       height: 20px;
       background: url('https://cdn-icons-png.flaticon.com/512/833/833472.png') no-repeat center center / cover;
       animation: fall linear infinite;
+      filter: drop-shadow(0 0 5px white);
     }
-
     @keyframes fall {
       0% {
         transform: translateY(-50px);
@@ -119,19 +107,15 @@
 <body>
   <div class="container">
     <button class="click-button" onclick="startLove()">❤ Clique</button>
-    <div id="content" class="hidden">
-      <!-- CORAÇÕES -->
-      <div class="hearts" id="hearts"></div>
 
-      <!-- MÚSICA -->
+    <div id="content" class="hidden">
       <div class="music-player">
-        <audio id="love-audio" loop>
+        <audio id="loveMusic" loop>
           <source src="music.mp3" type="audio/mpeg">
           Seu navegador não suporta áudio.
         </audio>
       </div>
 
-      <!-- CARROSSEL -->
       <div class="carousel" id="carousel">
         <img src="img1.jpg" class="active" alt="Foto 1">
         <img src="img2.jpg" alt="Foto 2">
@@ -144,31 +128,25 @@
         <img src="img9.jpg" alt="Foto 9">
       </div>
 
-      <!-- TEXTO -->
       <div class="text">
         <h3>Eu te amo há:</h3>
-        <p id="love-time"></p>
+        <p id="timer">Carregando...</p>
         <br />
         <p>A cada dia que passa, meu coração se enche mais de carinho e admiração por você. Cada sorriso seu ilumina o meu mundo, e cada abraço me faz sentir que estou exatamente onde deveria estar. Você é a razão dos meus melhores pensamentos, e tudo ao seu lado se torna mais bonito e significativo. Eu te amo para sempre 💜</p>
       </div>
     </div>
+
+    <div class="hearts" id="hearts"></div>
   </div>
 
   <script>
     function startLove() {
       document.querySelector('.click-button').style.display = 'none';
       document.getElementById('content').classList.remove('hidden');
-
-      // Iniciar áudio
-      const audio = document.getElementById('love-audio');
-      audio.play().catch((e) => {
-        console.log("Autoplay bloqueado, interação necessária.");
-      });
-
+      document.getElementById('loveMusic').play();
       startCarousel();
       createHearts();
-      updateLoveTime();
-      setInterval(updateLoveTime, 1000);
+      startTimer();
     }
 
     function startCarousel() {
@@ -183,32 +161,45 @@
 
     function createHearts() {
       const heartsContainer = document.getElementById('hearts');
+      const colors = ['#ff4d6d', '#ff85a1', '#c084fc', '#f472b6', '#facc15', '#f97316'];
+
       setInterval(() => {
         const heart = document.createElement('div');
         heart.className = 'heart';
         heart.style.left = Math.random() * 100 + 'vw';
         heart.style.animationDuration = (Math.random() * 3 + 2) + 's';
+        heart.style.filter = `drop-shadow(0 0 5px ${colors[Math.floor(Math.random() * colors.length)]})`;
+        heart.style.background = `url('https://cdn-icons-png.flaticon.com/512/833/833472.png') no-repeat center center / cover`;
         heartsContainer.appendChild(heart);
         setTimeout(() => heart.remove(), 5000);
       }, 200);
     }
 
-    function updateLoveTime() {
-      const startDate = new Date("2023-10-26T19:30:00");
-      const now = new Date();
-      let diff = now - startDate;
+    function startTimer() {
+      const startDate = new Date('2023-10-26T19:30:00');
+      const timerEl = document.getElementById('timer');
 
-      const seconds = Math.floor(diff / 1000) % 60;
-      const minutes = Math.floor(diff / (1000 * 60)) % 60;
-      const hours = Math.floor(diff / (1000 * 60 * 60)) % 24;
+      setInterval(() => {
+        const now = new Date();
+        let diff = Math.floor((now - startDate) / 1000);
 
-      const daysTotal = Math.floor(diff / (1000 * 60 * 60 * 24));
-      const years = Math.floor(daysTotal / 365);
-      const months = Math.floor((daysTotal % 365) / 30);
-      const days = (daysTotal % 365) % 30;
+        const years = Math.floor(diff / (365.25 * 24 * 60 * 60));
+        diff -= years * 365.25 * 24 * 60 * 60;
 
-      document.getElementById("love-time").textContent =
-        `${years} anos, ${months} meses, ${days} dias, ${hours} horas, ${minutes} minutos e ${seconds} segundos`;
+        const months = Math.floor(diff / (30.44 * 24 * 60 * 60));
+        diff -= months * 30.44 * 24 * 60 * 60;
+
+        const days = Math.floor(diff / (24 * 60 * 60));
+        diff -= days * 24 * 60 * 60;
+
+        const hours = Math.floor(diff / 3600);
+        diff -= hours * 3600;
+
+        const minutes = Math.floor(diff / 60);
+        const seconds = diff % 60;
+
+        timerEl.textContent = `${years} anos, ${months} meses, ${days} dias, ${hours} horas, ${minutes} minutos e ${seconds} segundos`;
+      }, 1000);
     }
   </script>
 </body>
