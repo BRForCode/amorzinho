@@ -1,0 +1,172 @@
+<!DOCTYPE html><html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Eu te amo</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }body {
+  background: #0d0d2b;
+  font-family: 'Arial', sans-serif;
+  color: white;
+  overflow: hidden;
+}
+
+.container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  flex-direction: column;
+  position: relative;
+  text-align: center;
+}
+
+.click-button {
+  background-color: #8b5cf6;
+  color: white;
+  border: 2px solid #a78bfa;
+  padding: 15px 30px;
+  font-size: 20px;
+  border-radius: 12px;
+  cursor: pointer;
+  box-shadow: 0 0 20px #a78bfa;
+  transition: 0.3s;
+}
+
+.click-button:hover {
+  background-color: #a78bfa;
+}
+
+.hidden {
+  display: none;
+}
+
+.carousel {
+  max-width: 90vw;
+  max-height: 60vh;
+  overflow: hidden;
+  position: relative;
+  margin: 20px auto;
+  border-radius: 20px;
+  box-shadow: 0 0 30px rgba(255, 255, 255, 0.3);
+}
+
+.carousel img {
+  width: 100%;
+  height: auto;
+  display: none;
+  object-fit: cover;
+}
+
+.carousel img.active {
+  display: block;
+}
+
+.music-player {
+  margin-bottom: 20px;
+}
+
+.text {
+  max-width: 90vw;
+  margin-top: 10px;
+  font-size: 18px;
+  line-height: 1.5;
+  background-color: rgba(0, 0, 0, 0.5);
+  padding: 15px;
+  border-radius: 10px;
+}
+
+.hearts {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: -1;
+}
+
+.heart {
+  position: absolute;
+  width: 20px;
+  height: 20px;
+  background: url('https://cdn-icons-png.flaticon.com/512/833/833472.png') no-repeat center center / cover;
+  animation: fall linear infinite;
+}
+
+@keyframes fall {
+  0% {
+    transform: translateY(-50px);
+    opacity: 1;
+  }
+  100% {
+    transform: translateY(100vh);
+    opacity: 0;
+  }
+}
+
+  </style>
+</head>
+<body>
+  <div class="container">
+    <button class="click-button" onclick="startLove()">❤ Clique</button><div id="content" class="hidden">
+  <div class="music-player">
+    <audio controls autoplay loop>
+      <source src="music.mp3" type="audio/mpeg">
+      Seu navegador não suporta áudio.
+    </audio>
+  </div>
+
+  <div class="carousel" id="carousel">
+    <img src="img1.jpg" class="active" alt="Foto 1">
+    <img src="img2.jpg" alt="Foto 2">
+    <img src="img3.jpg" alt="Foto 3">
+    <img src="img4.jpg" alt="Foto 4">
+    <img src="img5.jpg" alt="Foto 5">
+  </div>
+
+  <div class="text">
+    <h3>Eu te amo há:</h3>
+    <p>2 anos, 1 mês, 16 dias, 1 hora, 8 minutos e 2 segundos</p>
+    <br />
+    <p>A cada dia que passa, meu coração se enche mais de carinho e admiração por você. Cada sorriso seu ilumina o meu mundo, e cada abraço me faz sentir que estou exatamente onde deveria estar. Você é a razão dos meus melhores pensamentos, e tudo ao seu lado se torna mais bonito e significativo. Eu te amo para sempre 💜</p>
+  </div>
+</div>
+
+<div class="hearts" id="hearts"></div>
+
+  </div>  <script>
+    function startLove() {
+      document.querySelector('.click-button').style.display = 'none';
+      document.getElementById('content').classList.remove('hidden');
+      startCarousel();
+      createHearts();
+    }
+
+    function startCarousel() {
+      const images = document.querySelectorAll('#carousel img');
+      let index = 0;
+      setInterval(() => {
+        images[index].classList.remove('active');
+        index = (index + 1) % images.length;
+        images[index].classList.add('active');
+      }, 3000);
+    }
+
+    function createHearts() {
+      const heartsContainer = document.getElementById('hearts');
+      setInterval(() => {
+        const heart = document.createElement('div');
+        heart.className = 'heart';
+        heart.style.left = Math.random() * 100 + 'vw';
+        heart.style.animationDuration = (Math.random() * 3 + 2) + 's';
+        heartsContainer.appendChild(heart);
+        setTimeout(() => heart.remove(), 5000);
+      }, 200);
+    }
+  </script></body>
+</html>
