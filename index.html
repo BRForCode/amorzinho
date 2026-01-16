@@ -38,6 +38,7 @@
       cursor: pointer;
       box-shadow: 0 0 20px #a78bfa;
       transition: 0.3s;
+      z-index: 20;
     }
 
     .click-button:hover {
@@ -72,10 +73,6 @@
       display: block;
     }
 
-    .music-player {
-      margin-bottom: 20px;
-    }
-
     .text {
       max-width: 90vw;
       margin-top: 10px;
@@ -84,6 +81,7 @@
       background-color: rgba(0, 0, 0, 0.5);
       padding: 15px;
       border-radius: 10px;
+      z-index: 15;
     }
 
     .hearts {
@@ -105,33 +103,24 @@
     }
 
     @keyframes fall {
-      0% {
-        transform: translateY(-50px);
-        opacity: 1;
-      }
-      100% {
-        transform: translateY(100vh);
-        opacity: 0;
-      }
+      0% { transform: translateY(-50px); opacity: 1; }
+      100% { transform: translateY(100vh); opacity: 0; }
     }
   </style>
 </head>
 <body>
   <div class="container">
     <button class="click-button" onclick="startLove()">❤ Clique</button>
+    
     <div id="content" class="hidden">
-      <!-- CORAÇÕES -->
       <div class="hearts" id="hearts"></div>
 
-      <!-- MÚSICA -->
       <div class="music-player">
         <audio id="love-audio" loop>
           <source src="music.mp3" type="audio/mpeg">
-          Seu navegador não suporta áudio.
         </audio>
       </div>
 
-      <!-- CARROSSEL -->
       <div class="carousel" id="carousel">
         <img src="img1.jpg" class="active" alt="Foto 1">
         <img src="img2.jpg" alt="Foto 2">
@@ -144,10 +133,9 @@
         <img src="img9.jpg" alt="Foto 9">
       </div>
 
-      <!-- TEXTO -->
       <div class="text">
-        <h3>Eu te amo há:</h3>
-        <p id="love-time"></p>
+        <h3>Eu te amo há ❤️:</h3>
+        <p id="love-time" style="font-weight: bold; color: #a78bfa;"></p>
         <br />
         <p>A cada dia que passa, meu coração se enche mais de carinho e admiração por você. Cada sorriso seu ilumina o meu mundo, e cada abraço me faz sentir que estou exatamente onde deveria estar. Você é a razão dos meus melhores pensamentos, e tudo ao seu lado se torna mais bonito e significativo. Eu te amo para sempre 💜</p>
       </div>
@@ -159,11 +147,8 @@
       document.querySelector('.click-button').style.display = 'none';
       document.getElementById('content').classList.remove('hidden');
 
-      // Iniciar áudio
       const audio = document.getElementById('love-audio');
-      audio.play().catch((e) => {
-        console.log("Autoplay bloqueado, interação necessária.");
-      });
+      audio.play().catch(() => console.log("Interação necessária para o áudio."));
 
       startCarousel();
       createHearts();
@@ -190,25 +175,40 @@
         heart.style.animationDuration = (Math.random() * 3 + 2) + 's';
         heartsContainer.appendChild(heart);
         setTimeout(() => heart.remove(), 5000);
-      }, 200);
+      }, 300);
     }
 
+    // NOVA LÓGICA DE CÁLCULO PRECISO
     function updateLoveTime() {
-      const startDate = new Date("2023-10-29T19:30:00");
+      const startDate = new Date("2023-10-26T19:30:00"); // Data ajustada para o dia 26
       const now = new Date();
-      let diff = now - startDate;
 
-      const seconds = Math.floor(diff / 1000) % 60;
-      const minutes = Math.floor(diff / (1000 * 60)) % 60;
-      const hours = Math.floor(diff / (1000 * 60 * 60)) % 24;
+      let years = now.getFullYear() - startDate.getFullYear();
+      let months = now.getMonth() - startDate.getMonth();
+      let days = now.getDate() - startDate.getDate();
 
-      const daysTotal = Math.floor(diff / (1000 * 60 * 60 * 24));
-      const years = Math.floor(daysTotal / 365);
-      const months = Math.floor((daysTotal % 365) / 30);
-      const days = (daysTotal % 365) % 30;
+      // Ajuste para dias negativos (quando o dia atual é menor que o dia do início)
+      if (days < 0) {
+        months--;
+        // Encontra o último dia do mês anterior para compensar os dias
+        const lastDayOfMonth = new Date(now.getFullYear(), now.getMonth(), 0).getDate();
+        days += lastDayOfMonth;
+      }
 
-      document.getElementById("love-time").textContent =
-        `${years} anos, ${months} meses, ${days} dias, ${hours} horas, ${minutes} minutos e ${seconds} segundos`;
+      // Ajuste para meses negativos
+      if (months < 0) {
+        years--;
+        months += 12;
+      }
+
+      // Cálculo do tempo restante (horas, minutos, segundos)
+      const diffMs = now - startDate;
+      const hours = Math.floor((diffMs / (1000 * 60 * 60)) % 24);
+      const minutes = Math.floor((diffMs / (1000 * 60)) % 60);
+      const seconds = Math.floor((diffMs / 1000) % 60);
+
+      document.getElementById("love-time").textContent = 
+        ${years} anos, ${months} meses, ${days} dias, ${hours}h ${minutes}m ${seconds}s;
     }
   </script>
 </body>
