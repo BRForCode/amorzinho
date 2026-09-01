@@ -3,84 +3,106 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>LendControl Pro | Firebase Edition</title>
+    <title>LendControl Pro | Firebase</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
         :root {
             --primary: #2563eb;
+            --primary-dark: #1e40af;
             --success: #10b981;
             --warning: #f59e0b;
             --danger: #ef4444;
-            --bg: #f8fafc;
+            --background: #f8fafc;
             --surface: #ffffff;
             --text: #1e293b;
             --text-muted: #64748b;
             --border: #e2e8f0;
             --radius: 12px;
+            --shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1);
         }
 
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', sans-serif; }
-        body { background-color: var(--bg); color: var(--text); padding-bottom: 30px; }
+        body { background-color: var(--background); color: var(--text); line-height: 1.5; padding-bottom: 40px; }
 
         .container { max-width: 600px; margin: 0 auto; padding: 15px; }
 
-        /* Header e Dashboard */
-        header { background: var(--surface); padding: 20px; border-bottom: 1px solid var(--border); sticky: top; z-index: 10; }
-        .month-nav { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
-        .month-nav h2 { font-size: 1.1rem; text-transform: capitalize; }
-        .btn-nav { background: none; border: 1px solid var(--border); padding: 8px 15px; border-radius: 8px; cursor: pointer; }
+        /* Dashboard Header */
+        header { 
+            background: var(--surface); 
+            padding: 20px 0; 
+            border-bottom: 1px solid var(--border); 
+            position: sticky; 
+            top: 0; 
+            z-index: 100; 
+            box-shadow: 0 2px 4px rgba(0,0,0,0.02);
+        }
+        .month-nav { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; padding: 0 15px; }
+        .month-nav h2 { font-size: 1.1rem; font-weight: 700; text-transform: capitalize; color: var(--primary); }
+        .btn-nav { background: var(--background); border: 1px solid var(--border); padding: 8px 15px; border-radius: 8px; cursor: pointer; transition: 0.2s; }
+        .btn-nav:hover { background: var(--border); }
 
-        .stats-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
-        .stat-card { background: white; padding: 15px; border-radius: var(--radius); border: 1px solid var(--border); box-shadow: 0 2px 4px rgba(0,0,0,0.05); }
-        .stat-card span { font-size: 0.7rem; color: var(--text-muted); font-weight: bold; text-transform: uppercase; display: block; }
-        .stat-card strong { font-size: 1.1rem; display: block; margin-top: 5px; }
+        .stats-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; padding: 0 15px; }
+        .stat-card { background: var(--surface); padding: 12px; border-radius: var(--radius); border: 1px solid var(--border); box-shadow: var(--shadow); }
+        .stat-card span { font-size: 0.65rem; color: var(--text-muted); font-weight: 700; text-transform: uppercase; display: block; }
+        .stat-card strong { font-size: 1rem; color: var(--text); display: block; margin-top: 4px; }
+        .stat-card.highlight { border-left: 4px solid var(--primary); }
 
-        /* Formulário */
-        .card-form { background: white; padding: 20px; border-radius: var(--radius); margin: 20px 0; border: 1px solid var(--border); }
-        .form-title { font-weight: 700; margin-bottom: 15px; display: flex; justify-content: space-between; }
-        .input-group { margin-bottom: 15px; }
-        label { display: block; font-size: 0.8rem; font-weight: 600; color: var(--text-muted); margin-bottom: 5px; }
-        input, select { width: 100%; padding: 12px; border: 1px solid var(--border); border-radius: 8px; font-size: 1rem; }
-        .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
-        .btn-main { width: 100%; background: var(--primary); color: white; border: none; padding: 15px; border-radius: 10px; font-weight: 700; cursor: pointer; }
+        /* Form Card */
+        .card-form { background: var(--surface); padding: 20px; border-radius: var(--radius); margin: 20px 0; box-shadow: var(--shadow); border: 1px solid var(--border); }
+        .form-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; }
+        .form-title { font-size: 1rem; font-weight: 700; }
+        
+        .grid-form { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+        .input-group { margin-bottom: 12px; }
+        .input-group.full { grid-column: span 2; }
+        label { display: block; font-size: 0.75rem; font-weight: 600; margin-bottom: 5px; color: var(--text-muted); }
+        input { width: 100%; padding: 10px; border: 1px solid var(--border); border-radius: 8px; font-size: 0.9rem; outline: none; transition: 0.2s; }
+        input:focus { border-color: var(--primary); box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1); }
 
-        /* Lista */
-        .loan-card { background: white; border-radius: var(--radius); border: 1px solid var(--border); padding: 15px; margin-bottom: 15px; position: relative; }
-        .card-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 10px; }
-        .loan-name { font-weight: 700; font-size: 1.1rem; }
-        .badge { font-size: 0.7rem; padding: 4px 8px; border-radius: 5px; font-weight: bold; }
-        .badge-red { background: #fee2e2; color: var(--danger); }
+        .btn-primary { width: 100%; background: var(--primary); color: white; border: none; padding: 14px; border-radius: 10px; font-weight: 700; cursor: pointer; transition: 0.2s; }
+        .btn-primary:hover { background: var(--primary-dark); }
+
+        /* Loan Cards */
+        .loan-list { display: flex; flex-direction: column; gap: 15px; }
+        .loan-card { background: var(--surface); border-radius: var(--radius); border: 1px solid var(--border); padding: 16px; box-shadow: var(--shadow); position: relative; transition: 0.2s; cursor: pointer; }
+        .loan-card.paid { opacity: 0.6; background: #f1f5f9; }
+        
+        .card-top { display: flex; justify-content: space-between; margin-bottom: 10px; }
+        .loan-name { font-weight: 700; font-size: 1rem; }
+        .status-badge { font-size: 0.65rem; font-weight: 700; padding: 3px 8px; border-radius: 20px; text-transform: uppercase; }
         .badge-green { background: #dcfce7; color: var(--success); }
-        .badge-gray { background: #f1f5f9; color: var(--text-muted); }
+        .badge-red { background: #fee2e2; color: var(--danger); }
+        .badge-gray { background: #e2e8f0; color: var(--text-muted); }
 
-        .loan-info { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; font-size: 0.85rem; color: var(--text-muted); }
-        .loan-info b { color: var(--text); }
+        .loan-details { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; font-size: 0.8rem; color: var(--text-muted); }
+        .loan-details b { color: var(--text); }
 
-        .actions { display: flex; gap: 8px; margin-top: 15px; border-top: 1px solid var(--border); padding-top: 15px; }
-        .btn-sm { flex: 1; padding: 10px; border-radius: 8px; border: 1px solid var(--border); background: white; font-size: 0.8rem; font-weight: 600; cursor: pointer; text-align: center; text-decoration: none; color: inherit; }
+        .loan-actions { display: flex; gap: 8px; margin-top: 15px; border-top: 1px solid var(--border); padding-top: 12px; }
+        .btn-sm { flex: 1; padding: 8px; border-radius: 6px; font-size: 0.75rem; font-weight: 600; border: 1px solid var(--border); cursor: pointer; background: white; display: flex; align-items: center; justify-content: center; gap: 4px; text-decoration: none; color: var(--text); }
         .btn-pay { background: var(--success); color: white; border: none; }
+        .btn-del { color: var(--danger); border: none; background: none; font-size: 1rem; cursor: pointer; padding: 5px; }
 
-        /* Modais */
-        .modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); display: none; align-items: center; justify-content: center; z-index: 100; padding: 15px; }
-        .modal-content { background: white; padding: 20px; border-radius: 15px; width: 100%; max-width: 400px; }
-        .history-item { display: flex; justify-content: space-between; padding: 10px 0; border-bottom: 1px solid #eee; font-size: 0.9rem; }
+        /* Modal */
+        .modal-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.5); display: none; align-items: center; justify-content: center; z-index: 1000; padding: 20px; backdrop-filter: blur(3px); }
+        .modal-content { background: var(--surface); width: 100%; max-width: 400px; border-radius: var(--radius); padding: 24px; box-shadow: 0 20px 25px -5px rgb(0 0 0 / 0.1); }
+        .history-item { display: flex; justify-content: space-between; padding: 10px 0; border-bottom: 1px solid var(--border); font-size: 0.85rem; }
 
-        .hidden { display: none; }
+        .hidden { display: none !important; }
     </style>
 </head>
 <body>
 
 <header>
-    <div class="container">
+    <div class="container" style="padding:0">
         <div class="month-nav">
-            <button class="btn-nav" id="prevMonth"><i class="fas fa-chevron-left"></i></button>
-            <h2 id="monthDisplay">Mês Ano</h2>
-            <button class="btn-nav" id="nextMonth"><i class="fas fa-chevron-right"></i></button>
+            <button class="btn-nav" id="btnPrev"><i class="fas fa-chevron-left"></i></button>
+            <h2 id="displayMesAno">Setembro 2023</h2>
+            <button class="btn-nav" id="btnNext"><i class="fas fa-chevron-right"></i></button>
         </div>
         <div class="stats-grid">
-            <div class="stat-card" style="border-left: 4px solid var(--primary);">
+            <div class="stat-card highlight">
                 <span>Ativo Total</span>
                 <strong id="statAtivo">R$ 0,00</strong>
             </div>
@@ -90,7 +112,7 @@
             </div>
             <div class="stat-card">
                 <span>Recebido</span>
-                <strong id="statRecebido" style="color: var(--success);">R$ 0,00</strong>
+                <strong id="statRecebido" style="color: var(--success)">R$ 0,00</strong>
             </div>
             <div class="stat-card">
                 <span>Emprestado</span>
@@ -101,284 +123,286 @@
 </header>
 
 <main class="container">
+    <!-- Formulário -->
     <section class="card-form">
-        <div class="form-title">
-            <span id="formTitle">Novo Empréstimo</span>
-            <button onclick="resetForm()" id="btnCancelEdit" class="hidden" style="color:var(--danger); background:none; border:none; cursor:pointer;">Cancelar</button>
+        <div class="form-header">
+            <span class="form-title" id="formTitle">Novo Empréstimo</span>
+            <button class="hidden" id="btnCancelEdit" style="color:var(--danger); border:none; background:none; font-weight:600; cursor:pointer;" onclick="resetForm()">Cancelar</button>
         </div>
         <form id="loanForm">
             <input type="hidden" id="editId">
-            <div class="input-group">
+            <div class="input-group full">
                 <label>Nome do Amigo</label>
-                <input type="text" id="nome" required placeholder="Ex: João Silva">
+                <input type="text" id="campoNome" required placeholder="Ex: João Silva">
             </div>
-            <div class="grid-2">
+            <div class="grid-form">
                 <div class="input-group">
-                    <label>Valor (R$)</label>
-                    <input type="number" step="0.01" id="valor" required>
+                    <label>Valor Principal (R$)</label>
+                    <input type="number" step="0.01" id="campoValor" required>
                 </div>
                 <div class="input-group">
                     <label>Juros Mensal (%)</label>
-                    <input type="number" step="0.1" id="juros" value="2" required>
+                    <input type="number" step="0.1" id="campoTaxa" value="2" required>
                 </div>
             </div>
-            <div class="grid-2">
+            <div class="grid-form">
                 <div class="input-group">
                     <label>Data de Vencimento</label>
-                    <input type="date" id="vencimento" required>
+                    <input type="date" id="campoVencimento" required>
                 </div>
                 <div class="input-group">
-                    <label>WhatsApp</label>
-                    <input type="tel" id="whatsapp" placeholder="11999999999" required>
+                    <label>WhatsApp (DDD+Núm)</label>
+                    <input type="tel" id="campoWhatsApp" required placeholder="11999999999">
                 </div>
             </div>
-            <button type="submit" class="btn-main" id="btnSubmit">Salvar Empréstimo</button>
+            <button type="submit" class="btn-primary" id="btnSubmit">Salvar Empréstimo</button>
         </form>
     </section>
 
-    <div id="loanList">
-        <!-- Cards via JS -->
-    </div>
+    <!-- Lista -->
+    <div class="loan-list" id="loanList"></div>
 </main>
 
 <!-- Modal Pagamento -->
-<div id="modalPay" class="modal">
+<div class="modal-overlay" id="modalPay">
     <div class="modal-content">
-        <h3>Registrar Pagamento</h3><br>
+        <h3 style="margin-bottom:15px">Registrar Recebimento</h3>
         <div class="input-group">
             <label>Data do Pagamento</label>
             <input type="date" id="payDate">
         </div>
-        <button class="btn-main" onclick="processPayment('juros')" style="background:var(--text); margin-bottom:10px;">Apenas Juros</button>
-        <div style="border:1px solid var(--border); padding:10px; border-radius:8px;">
+        <button class="btn-primary" style="background:#334155; margin-bottom:10px" onclick="confirmPayment('juros')">Apenas Juros</button>
+        <div style="border:1px solid var(--border); padding:12px; border-radius:10px; background:var(--background)">
             <label>Abater do Principal (R$)</label>
-            <input type="number" id="payValue" placeholder="0,00">
-            <button class="btn-main" onclick="processPayment('abatimento')" style="margin-top:10px; background:var(--success);">Confirmar Abatimento</button>
+            <input type="number" step="0.01" id="payAmount" placeholder="Valor p/ descontar">
+            <button class="btn-primary" style="margin-top:10px; background:var(--success)" onclick="confirmPayment('abatimento')">Confirmar Abatimento</button>
         </div>
-        <button class="btn-sm" onclick="closeModal()" style="width:100%; margin-top:10px;">Fechar</button>
+        <button class="btn-sm" style="width:100%; margin-top:12px" onclick="closeModals()">Fechar</button>
     </div>
 </div>
 
 <!-- Modal Histórico -->
-<div id="modalHistory" class="modal">
+<div class="modal-overlay" id="modalHist">
     <div class="modal-content">
-        <h3 id="histName">Histórico</h3><br>
-        <div id="histContent" style="max-height: 300px; overflow-y: auto;"></div>
-        <hr><br>
-        <div style="display:flex; justify-content:space-between;">
-            <strong>Total Pago:</strong>
-            <strong id="histTotal" style="color:var(--success);">R$ 0,00</strong>
+        <h3 id="histTitle">Histórico</h3>
+        <div id="histContent" style="margin: 15px 0; max-height: 250px; overflow-y: auto;"></div>
+        <div style="display:flex; justify-content:space-between; font-weight:700; border-top:2px solid var(--border); padding-top:10px">
+            <span>Total Pago:</span>
+            <span id="histTotal" style="color:var(--success)">R$ 0,00</span>
         </div>
-        <button class="btn-main" onclick="closeModal()" style="margin-top:20px;">Fechar</button>
+        <button class="btn-primary" style="margin-top:20px" onclick="closeModals()">Fechar</button>
     </div>
 </div>
 
 <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.1/firebase-app.js";
-    import { getFirestore, collection, addDoc, getDocs, doc, updateDoc, deleteDoc, onSnapshot, query, where, orderBy } from "https://www.gstatic.com/firebasejs/9.22.1/firebase-firestore.js";
+    import { getFirestore, collection, addDoc, onSnapshot, doc, updateDoc, deleteDoc, query, where, orderBy } from "https://www.gstatic.com/firebasejs/9.22.1/firebase-firestore.js";
 
-    // COLE SUAS CREDENCIAIS AQUI
+    // CREDENCIAIS VINCULADAS AO SEU PROJETO
     const firebaseConfig = {
-        apiKey: "SUA_API_KEY",
-        authDomain: "SEU_AUTH_DOMAIN",
-        projectId: "SEU_PROJECT_ID",
-        storageBucket: "SEU_STORAGE_BUCKET",
-        messagingSenderId: "SEU_SENDER_ID",
-        appId: "SEU_APP_ID"
+        apiKey: "AIzaSyCTBqA3PVyxQmIvk8k7Ia1HIeGsci_rqdY",
+        authDomain: "lista-casamento-f19c4.firebaseapp.com",
+        projectId: "lista-casamento-f19c4",
+        storageBucket: "lista-casamento-f19c4.firebasestorage.app",
+        messagingSenderId: "704126420674",
+        appId: "1:704126420674:web:16b47c759235870ace1d5b"
     };
 
     const app = initializeApp(firebaseConfig);
     const db = getFirestore(app);
 
-    let currentViewDate = new Date();
-    currentViewDate.setDate(1);
+    let viewDate = new Date(); viewDate.setDate(1);
     let allLoans = [];
     let allTransactions = [];
     let activeLoanId = null;
 
-    // --- Lógica de Datas ---
+    // --- Auxiliares ---
+    const fmt = (v) => new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(v || 0);
+
     function getNextMonthDay10() {
-        const d = new Date();
-        d.setMonth(d.getMonth() + 1);
-        d.setDate(10);
+        const now = new Date();
+        const d = new Date(now.getFullYear(), now.getMonth() + 1, 10);
         return d.toISOString().split('T')[0];
     }
 
-    function resetForm() {
+    window.resetForm = function() {
         document.getElementById('loanForm').reset();
         document.getElementById('editId').value = "";
-        document.getElementById('vencimento').value = getNextMonthDay10();
+        document.getElementById('campoVencimento').value = getNextMonthDay10();
         document.getElementById('formTitle').innerText = "Novo Empréstimo";
         document.getElementById('btnSubmit').innerText = "Salvar Empréstimo";
         document.getElementById('btnCancelEdit').classList.add('hidden');
     }
 
-    // Inicializar data do form
-    document.getElementById('vencimento').value = getNextMonthDay10();
-
-    // --- Firebase Listeners ---
+    // --- Listeners Firebase ---
     onSnapshot(collection(db, "loans"), (snap) => {
         allLoans = snap.docs.map(d => ({ id: d.id, ...d.data() }));
         render();
     });
 
-    onSnapshot(collection(db, "transactions"), (snap) => {
+    onSnapshot(collection(db, "loan_transactions"), (snap) => {
         allTransactions = snap.docs.map(d => ({ id: d.id, ...d.data() }));
         render();
     });
 
-    // --- Ações ---
+    // --- Operações ---
     document.getElementById('loanForm').onsubmit = async (e) => {
         e.preventDefault();
         const id = document.getElementById('editId').value;
-        const data = {
-            nome: document.getElementById('nome').value,
-            principal: parseFloat(document.getElementById('valor').value),
-            taxa: parseFloat(document.getElementById('juros').value),
-            vencimento: document.getElementById('vencimento').value,
-            whatsapp: document.getElementById('whatsapp').value,
+        const loanData = {
+            nome: document.getElementById('campoNome').value,
+            principal: parseFloat(document.getElementById('campoValor').value),
+            taxa: parseFloat(document.getElementById('campoTaxa').value),
+            vencimento: document.getElementById('campoVencimento').value,
+            whatsapp: document.getElementById('campoWhatsApp').value,
             ativo: true
         };
 
-        if (id) {
-            await updateDoc(doc(db, "loans", id), data);
+        if(id) {
+            await updateDoc(doc(db, "loans", id), loanData);
         } else {
-            data.dataCriacao = new Date().toISOString().split('T')[0]; // Data do empréstimo fixa no dia que inclui
-            await addDoc(collection(db, "loans"), data);
+            loanData.dataInclusao = new Date().toISOString().split('T')[0];
+            loanData.vencimentoOriginal = loanData.vencimento;
+            await addDoc(collection(db, "loans"), loanData);
         }
         resetForm();
     };
 
-    window.editLoan = (id) => {
-        const l = allLoans.find(x => x.id === id);
-        document.getElementById('editId').value = l.id;
-        document.getElementById('nome').value = l.nome;
-        document.getElementById('valor').value = l.principal;
-        document.getElementById('juros').value = l.taxa;
-        document.getElementById('vencimento').value = l.vencimento;
-        document.getElementById('whatsapp').value = l.whatsapp;
-        document.getElementById('formTitle').innerText = "Editando: " + l.nome;
-        document.getElementById('btnSubmit').innerText = "Atualizar";
-        document.getElementById('btnCancelEdit').classList.remove('hidden');
-        window.scrollTo(0,0);
-    };
-
-    window.deleteLoan = async (id) => {
-        if(confirm("Excluir este empréstimo e todo o histórico?")){
-            await deleteDoc(doc(db, "loans", id));
-            // Opcional: deletar transações vinculadas
-        }
-    };
-
-    window.openPay = (id) => {
+    window.openPay = (id, e) => {
+        e.stopPropagation();
         activeLoanId = id;
         document.getElementById('payDate').value = new Date().toISOString().split('T')[0];
         document.getElementById('modalPay').style.display = 'flex';
     };
 
-    window.processPayment = async (type) => {
+    window.confirmPayment = async (type) => {
         const loan = allLoans.find(l => l.id === activeLoanId);
         const date = document.getElementById('payDate').value;
-        let valorPago = 0;
+        let valor = 0;
 
-        if (type === 'juros') {
-            valorPago = loan.principal * (loan.taxa / 100);
-            const nextDue = new Date(loan.vencimento);
+        if(type === 'juros') {
+            valor = loan.principal * (loan.taxa / 100);
+            const nextDue = new Date(loan.vencimento + "T12:00:00");
             nextDue.setMonth(nextDue.getMonth() + 1);
             await updateDoc(doc(db, "loans", activeLoanId), { vencimento: nextDue.toISOString().split('T')[0] });
         } else {
-            valorPago = parseFloat(document.getElementById('payValue').value);
-            const novoPrincipal = loan.principal - valorPago;
-            const dataUpd = { principal: novoPrincipal };
-            if(novoPrincipal <= 0) dataUpd.ativo = false;
-            await updateDoc(doc(db, "loans", activeLoanId), dataUpd);
+            valor = parseFloat(document.getElementById('payAmount').value);
+            if(!valor || valor <= 0) return alert("Valor inválido");
+            const novoSaldo = loan.principal - valor;
+            const upd = { principal: novoSaldo };
+            if(novoSaldo <= 0) { upd.principal = 0; upd.ativo = false; }
+            await updateDoc(doc(db, "loans", activeLoanId), upd);
         }
 
-        await addDoc(collection(db, "transactions"), {
+        await addDoc(collection(db, "loan_transactions"), {
             loanId: activeLoanId,
             date,
-            type: type === 'juros' ? 'Juros' : 'Abatimento',
-            value: valorPago
+            type: type === 'juros' ? 'Juros' : 'Amortização',
+            value: valor
         });
+        closeModals();
+    };
 
-        closeModal();
+    window.deleteLoan = async (id, e) => {
+        e.stopPropagation();
+        if(confirm("Deseja apagar este empréstimo e seu histórico?")) {
+            await deleteDoc(doc(db, "loans", id));
+        }
+    };
+
+    window.editLoan = (id, e) => {
+        e.stopPropagation();
+        const l = allLoans.find(x => x.id === id);
+        document.getElementById('editId').value = l.id;
+        document.getElementById('campoNome').value = l.nome;
+        document.getElementById('campoValor').value = l.principal;
+        document.getElementById('campoTaxa').value = l.taxa;
+        document.getElementById('campoVencimento').value = l.vencimento;
+        document.getElementById('campoWhatsApp').value = l.whatsapp;
+        document.getElementById('formTitle').innerText = "Editando Amigo";
+        document.getElementById('btnSubmit').innerText = "Atualizar Dados";
+        document.getElementById('btnCancelEdit').classList.remove('hidden');
+        window.scrollTo({top: 0, behavior: 'smooth'});
     };
 
     window.openHistory = (id) => {
         const loan = allLoans.find(l => l.id === id);
         const trans = allTransactions.filter(t => t.loanId === id).sort((a,b) => new Date(b.date) - new Date(a.date));
-        
-        document.getElementById('histName').innerText = "Histórico: " + loan.nome;
+        document.getElementById('histTitle').innerText = "Histórico: " + loan.nome;
         document.getElementById('histContent').innerHTML = trans.map(t => `
             <div class="history-item">
                 <span><b>${t.type}</b><br><small>${t.date.split('-').reverse().join('/')}</small></span>
                 <strong style="color:var(--success)">+ ${fmt(t.value)}</strong>
             </div>
-        `).join('') || 'Sem pagamentos.';
-        
+        `).join('') || '<p style="text-align:center;color:#94a3b8">Sem registros.</p>';
         document.getElementById('histTotal').innerText = fmt(trans.reduce((acc, t) => acc + t.value, 0));
-        document.getElementById('modalHistory').style.display = 'flex';
+        document.getElementById('modalHist').style.display = 'flex';
     };
 
-    window.closeModal = () => { document.querySelectorAll('.modal').forEach(m => m.style.display = 'none'); };
+    window.closeModals = () => document.querySelectorAll('.modal-overlay').forEach(m => m.style.display = 'none');
 
-    // --- Navegação e Render ---
-    const fmt = (v) => new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(v || 0);
-
-    window.changeMonth = (s) => { currentViewDate.setMonth(currentViewDate.getMonth() + s); render(); };
-    document.getElementById('prevMonth').onclick = () => changeMonth(-1);
-    document.getElementById('nextMonth').onclick = () => changeMonth(1);
+    // --- Render ---
+    window.changeMonth = (s) => { viewDate.setMonth(viewDate.getMonth() + s); render(); };
+    document.getElementById('btnPrev').onclick = () => changeMonth(-1);
+    document.getElementById('btnNext').onclick = () => changeMonth(1);
 
     function render() {
-        const monthKey = currentViewDate.toISOString().substring(0, 7);
-        document.getElementById('monthDisplay').innerText = currentViewDate.toLocaleDateString('pt-BR', { month: 'long', year: 'numeric' });
+        const mesKey = viewDate.toISOString().substring(0, 7);
+        document.getElementById('displayMesAno').innerText = viewDate.toLocaleDateString('pt-BR', { month: 'long', year: 'numeric' });
 
-        const validLoans = allLoans.filter(l => l.dataCriacao.substring(0, 7) <= monthKey);
-        
-        const statAtivo = validLoans.filter(l => l.ativo).reduce((acc, l) => acc + l.principal, 0);
-        const statJuros = validLoans.filter(l => l.ativo).reduce((acc, l) => acc + (l.principal * (l.taxa/100)), 0);
-        const statRecebido = allTransactions.filter(t => t.date.substring(0, 7) === monthKey).reduce((acc, t) => acc + t.value, 0);
-        const statEmprestado = allLoans.filter(l => l.dataCriacao.substring(0, 7) === monthKey).reduce((acc, l) => acc + l.principal, 0);
+        // Só considera empréstimos criados ATÉ o mês visualizado
+        const validos = allLoans.filter(l => l.dataInclusao.substring(0, 7) <= mesKey);
+
+        const statAtivo = validos.filter(l => l.ativo).reduce((acc, l) => acc + l.principal, 0);
+        const statJuros = validos.filter(l => l.ativo).reduce((acc, l) => acc + (l.principal * (l.taxa/100)), 0);
+        const statRecebido = allTransactions.filter(t => t.date.substring(0, 7) === mesKey).reduce((acc, t) => acc + t.value, 0);
+        const statEmprestado = allLoans.filter(l => l.dataInclusao.substring(0, 7) === mesKey).reduce((acc, l) => acc + l.principal, 0);
 
         document.getElementById('statAtivo').innerText = fmt(statAtivo);
         document.getElementById('statJuros').innerText = fmt(statJuros);
         document.getElementById('statRecebido').innerText = fmt(statRecebido);
         document.getElementById('statEmprestado').innerText = fmt(statEmprestado);
 
-        const sorted = [...validLoans].sort((a,b) => {
+        const list = document.getElementById('loanList');
+        list.innerHTML = "";
+
+        const ordenados = [...validos].sort((a,b) => {
             if (a.ativo !== b.ativo) return a.ativo ? -1 : 1;
             return new Date(a.vencimento) - new Date(b.vencimento);
         });
 
-        document.getElementById('loanList').innerHTML = sorted.map(l => {
-            const diff = Math.ceil((new Date(l.vencimento + "T12:00:00") - new Date()) / 86400000);
-            let badge = l.ativo ? (diff < 0 ? `<span class="badge badge-red">Atrasado ${Math.abs(diff)}d</span>` : `<span class="badge badge-green">Vence em ${diff}d</span>`) : `<span class="badge badge-gray">Quitado</span>`;
+        ordenados.forEach(l => {
+            const diff = Math.ceil((new Date(l.vencimento + "T12:00:00") - new Date().setHours(0,0,0,0)) / 86400000);
+            let badge = l.ativo ? (diff < 0 ? `<span class="status-badge badge-red">Atrasado ${Math.abs(diff)}d</span>` : `<span class="status-badge badge-green">Faltam ${diff}d</span>`) : `<span class="status-badge badge-gray">Quitado</span>`;
             
-            return `
-                <div class="loan-card ${!l.ativo ? 'badge-gray' : ''}">
-                    <div class="card-header">
-                        <div><div class="loan-name">${l.nome}</div>${badge}</div>
-                        <button onclick="deleteLoan('${l.id}')" style="background:none; border:none; color:var(--danger); cursor:pointer;"><i class="fas fa-trash"></i></button>
-                    </div>
-                    <div class="loan-info" onclick="openHistory('${l.id}')">
-                        <div>Principal: <b>${fmt(l.principal)}</b></div>
-                        <div>Juros: <b>${fmt(l.principal * (l.taxa/100))}</b></div>
-                        <div>Vencimento: <b>${l.vencimento.split('-').reverse().join('/')}</b></div>
-                        <div>Taxa: <b>${l.taxa}%</b></div>
-                    </div>
-                    <div class="actions">
-                        <button class="btn-sm" onclick="editLoan('${l.id}')">Editar</button>
-                        ${l.ativo ? `
-                            <button class="btn-sm btn-pay" onclick="openPay('${l.id}')">Receber</button>
-                            <a class="btn-sm" style="color:#25d366" href="https://wa.me/55${l.whatsapp.replace(/\D/g,'')}" target="_blank">WhatsApp</a>
-                        ` : ''}
-                    </div>
+            const card = document.createElement('div');
+            card.className = `loan-card ${!l.ativo ? 'paid' : ''}`;
+            card.onclick = () => openHistory(l.id);
+            card.innerHTML = `
+                <div class="card-top">
+                    <div><div class="loan-name">${l.nome}</div>${badge}</div>
+                    <button class="btn-del" onclick="deleteLoan('${l.id}', event)"><i class="fas fa-trash"></i></button>
+                </div>
+                <div class="loan-details">
+                    <div>Saldo: <b>${fmt(l.principal)}</b></div>
+                    <div>Juros/mês: <b>${fmt(l.principal * (l.taxa/100))}</b></div>
+                    <div>Vencimento: <b>${l.vencimento.split('-').reverse().join('/')}</b></div>
+                    <div>Taxa: <b>${l.taxa}%</b></div>
+                </div>
+                <div class="loan-actions">
+                    <button class="btn-sm" onclick="editLoan('${l.id}', event)">✏️ Editar</button>
+                    ${l.ativo ? `
+                        <button class="btn-sm btn-pay" onclick="openPay('${l.id}', event)">💰 Receber</button>
+                        <a class="btn-sm" style="color:#25d366" href="https://wa.me/55${l.whatsapp.replace(/\D/g,'')}" target="_blank">💬 Cobrar</a>
+                    ` : ''}
                 </div>
             `;
-        }).join('');
+            list.appendChild(card);
+        });
     }
 
-    window.resetForm = resetForm;
+    // Init
+    document.getElementById('campoVencimento').value = getNextMonthDay10();
 </script>
 </body>
 </html>
