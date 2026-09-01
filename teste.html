@@ -1,0 +1,547 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LendControl | Gestão Pro</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #2563eb;
+            --primary-dark: #1e40af;
+            --success: #10b981;
+            --warning: #f59e0b;
+            --danger: #ef4444;
+            --background: #f8fafc;
+            --surface: #ffffff;
+            --text-main: #1e293b;
+            --text-muted: #64748b;
+            --border: #e2e8f0;
+            --radius: 12px;
+            --shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1);
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', sans-serif; }
+
+        body {
+            background-color: var(--background);
+            color: var(--text-main);
+            line-height: 1.5;
+            padding-bottom: 40px;
+        }
+
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        header {
+            background: var(--surface);
+            padding: 20px 0;
+            border-bottom: 1px solid var(--border);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.02);
+        }
+
+        .month-nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding: 0 20px;
+        }
+
+        .month-nav h2 { font-size: 1.2rem; font-weight: 700; text-transform: capitalize; color: var(--primary); }
+
+        .btn-icon {
+            background: var(--background);
+            border: 1px solid var(--border);
+            padding: 8px 15px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: 0.2s;
+            font-weight: bold;
+        }
+
+        .btn-icon:hover { background: var(--border); }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+            padding: 0 20px;
+        }
+
+        .stat-card {
+            background: var(--surface);
+            padding: 15px;
+            border-radius: var(--radius);
+            border: 1px solid var(--border);
+            box-shadow: var(--shadow);
+        }
+
+        .stat-card span { font-size: 0.75rem; color: var(--text-muted); font-weight: 600; display: block; }
+        .stat-card strong { font-size: 1.1rem; color: var(--text-main); display: block; margin-top: 5px; }
+        .stat-card.highlight { border-left: 4px solid var(--primary); }
+
+        .card-form {
+            background: var(--surface);
+            padding: 20px;
+            border-radius: var(--radius);
+            margin: 25px 0;
+            box-shadow: var(--shadow);
+            border: 1px solid var(--border);
+        }
+
+        .form-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; }
+        .form-title { font-size: 1rem; font-weight: 700; color: var(--text-main); }
+        
+        .grid-form { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+        .input-group { margin-bottom: 15px; }
+        .input-group.full { grid-column: span 2; }
+        
+        label { display: block; font-size: 0.8rem; font-weight: 600; margin-bottom: 6px; color: var(--text-muted); }
+        
+        input {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            font-size: 0.95rem;
+            background: #fdfdfd;
+        }
+
+        input:focus { outline: none; border-color: var(--primary); box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1); }
+
+        .btn-primary {
+            width: 100%;
+            background: var(--primary);
+            color: white;
+            border: none;
+            padding: 14px;
+            border-radius: 10px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+
+        .btn-primary:hover { background: var(--primary-dark); transform: translateY(-1px); }
+
+        .loan-list { display: flex; flex-direction: column; gap: 15px; }
+        
+        .loan-card {
+            background: var(--surface);
+            border-radius: var(--radius);
+            border: 1px solid var(--border);
+            padding: 18px;
+            box-shadow: var(--shadow);
+            cursor: pointer;
+            transition: 0.2s;
+            position: relative;
+        }
+
+        .loan-card.overdue { border-left: 5px solid var(--danger); }
+        .loan-card.paid { opacity: 0.7; background: #f1f5f9; }
+
+        .card-top { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 12px; }
+        .loan-name { font-weight: 700; font-size: 1.1rem; color: var(--text-main); }
+        
+        .status-badge { font-size: 0.7rem; font-weight: 700; padding: 4px 10px; border-radius: 20px; text-transform: uppercase; }
+        .badge-green { background: #dcfce7; color: var(--success); }
+        .badge-yellow { background: #fef3c7; color: var(--warning); }
+        .badge-red { background: #fee2e2; color: var(--danger); }
+        .badge-gray { background: #e2e8f0; color: var(--text-muted); }
+
+        .loan-details { font-size: 0.85rem; color: var(--text-muted); display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+        .loan-details b { color: var(--text-main); font-weight: 600; }
+
+        .loan-actions {
+            display: flex;
+            gap: 10px;
+            margin-top: 15px;
+            border-top: 1px solid var(--border);
+            padding-top: 15px;
+        }
+
+        .btn-sm {
+            flex: 1;
+            padding: 10px;
+            border-radius: 8px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            border: 1px solid var(--border);
+            cursor: pointer;
+            background: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+        }
+
+        .btn-pay { background: var(--success); color: white; border: none; }
+        .btn-wa { color: #25d366; border-color: #25d366; }
+        .btn-delete-loan { color: var(--danger); border: none; background: none; font-size: 1.1rem; padding: 5px; cursor: pointer; }
+
+        .modal-overlay {
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(15, 23, 42, 0.6);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            padding: 20px;
+            backdrop-filter: blur(4px);
+        }
+
+        .modal-content {
+            background: var(--surface);
+            width: 100%;
+            max-width: 450px;
+            border-radius: var(--radius);
+            padding: 25px;
+            box-shadow: 0 20px 25px -5px rgb(0 0 0 / 0.1);
+        }
+
+        .history-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 0;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .btn-del-trans { color: var(--danger); background: #fee2e2; border: none; width: 30px; height: 30px; border-radius: 6px; cursor: pointer; }
+
+        .hidden { display: none !important; }
+        .text-success { color: var(--success) !important; }
+        .text-danger { color: var(--danger) !important; }
+    </style>
+</head>
+<body>
+
+    <header>
+        <div class="container" style="padding: 0;">
+            <div class="month-nav">
+                <button class="btn-icon" onclick="changeMonth(-1)">❮</button>
+                <h2 id="currentMonthDisplay">Mês Ano</h2>
+                <button class="btn-icon" onclick="changeMonth(1)">❯</button>
+            </div>
+
+            <div class="stats-grid">
+                <div class="stat-card highlight">
+                    <span>Ativo Total</span>
+                    <strong id="statTotalActive">R$ 0,00</strong>
+                </div>
+                <div class="stat-card">
+                    <span>Juros Esperados (Mês)</span>
+                    <strong id="statExpectedInterest">R$ 0,00</strong>
+                </div>
+                <div class="stat-card">
+                    <span>Recebido no Mês</span>
+                    <strong id="statReceivedMonth" class="text-success">R$ 0,00</strong>
+                </div>
+                <div class="stat-card" id="lentMonthContainer">
+                    <span>Emprestado no Mês</span>
+                    <strong id="statLentMonth">R$ 0,00</strong>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <main class="container">
+        <section class="card-form">
+            <div class="form-header">
+                <span class="form-title" id="formTitle">Novo Empréstimo</span>
+                <button class="text-danger hidden" id="btnCancelEdit" onclick="resetForm()" style="background:none; border:none; font-weight:bold; cursor:pointer;">Cancelar</button>
+            </div>
+            <form id="loanForm">
+                <input type="hidden" id="editId">
+                <div class="input-group full">
+                    <label>Nome do Amigo</label>
+                    <input type="text" id="loanName" required placeholder="Ex: João Silva">
+                </div>
+                <div class="grid-form">
+                    <div class="input-group">
+                        <label>Valor Principal (R$)</label>
+                        <input type="number" step="0.01" id="loanValue" required>
+                    </div>
+                    <div class="input-group">
+                        <label>Juros Mensal (%)</label>
+                        <input type="number" step="0.1" id="loanInterest" required>
+                    </div>
+                </div>
+                <div class="grid-form">
+                    <div class="input-group">
+                        <label>Data de Empréstimo (Origem)</label>
+                        <input type="date" id="loanDate" required>
+                    </div>
+                    <div class="input-group">
+                        <label>WhatsApp (DDD+Núm)</label>
+                        <input type="tel" id="loanPhone" required placeholder="11999999999">
+                    </div>
+                </div>
+                <button type="submit" class="btn-primary" id="btnSubmit">Salvar Empréstimo</button>
+            </form>
+        </section>
+
+        <div class="loan-list" id="loanList"></div>
+    </main>
+
+    <!-- Modais omitidos para brevidade mas mantidos na lógica JS funcional abaixo -->
+    <div class="modal-overlay" id="modalPayment">
+        <div class="modal-content">
+            <h3 style="margin-bottom: 20px;">Registrar Pagamento</h3>
+            <div class="input-group">
+                <label>Data do Recebimento</label>
+                <input type="date" id="payDate">
+            </div>
+            <div style="display: flex; flex-direction: column; gap: 12px;">
+                <button class="btn-primary" onclick="processPayment('interest')" style="background: var(--text-main);">Pagar apenas Juros</button>
+                <div style="border: 1px solid var(--border); padding: 15px; border-radius: 10px; background: #f8fafc;">
+                    <label>Abater Valor do Principal (R$)</label>
+                    <input type="number" step="0.01" id="payPrincipalAmount" placeholder="Ex: 500,00">
+                    <button class="btn-primary" onclick="processPayment('principal')" style="margin-top: 10px; background: var(--success);">Confirmar Abatimento</button>
+                </div>
+                <button class="btn-sm" onclick="closeModals()">Fechar</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal-overlay" id="modalHistory">
+        <div class="modal-content">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px;">
+                <h3 id="historyName">Histórico</h3>
+                <button onclick="closeModals()" style="background:none; border:none; font-size:1.5rem; cursor:pointer;">&times;</button>
+            </div>
+            <p id="historyInfo" style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 20px;"></p>
+            <div id="historyList" style="max-height: 300px; overflow-y: auto;"></div>
+            <div style="margin-top: 20px; padding-top: 15px; border-top: 2px solid var(--border); display: flex; justify-content: space-between; font-weight: 800;">
+                <span>Total Recebido:</span>
+                <span id="historyTotal" class="text-success">R$ 0,00</span>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let loans = JSON.parse(localStorage.getItem('loans')) || [];
+        let transactions = JSON.parse(localStorage.getItem('transactions')) || [];
+        let viewDate = new Date();
+        viewDate.setDate(1); 
+        let activeLoanId = null;
+
+        const fmt = (val) => new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(val || 0);
+        
+        function saveData() {
+            localStorage.setItem('loans', JSON.stringify(loans));
+            localStorage.setItem('transactions', JSON.stringify(transactions));
+            render();
+        }
+
+        function getMonthName(date) {
+            return date.toLocaleDateString('pt-BR', { month: 'long', year: 'numeric' });
+        }
+
+        function changeMonth(step) {
+            viewDate.setMonth(viewDate.getMonth() + step);
+            render();
+        }
+
+        document.getElementById('loanForm').onsubmit = function(e) {
+            e.preventDefault();
+            const editId = document.getElementById('editId').value;
+            const loanDate = document.getElementById('loanDate').value;
+            
+            const loanData = {
+                id: editId || Date.now().toString(),
+                name: document.getElementById('loanName').value,
+                principal: parseFloat(document.getElementById('loanValue').value),
+                interestRate: parseFloat(document.getElementById('loanInterest').value),
+                dueDate: loanDate, 
+                phone: document.getElementById('loanPhone').value,
+                active: true,
+                currentDueDate: editId ? loans.find(l => l.id === editId).currentDueDate : loanDate
+            };
+
+            if (editId) {
+                const index = loans.findIndex(l => l.id === editId);
+                loans[index] = { ...loans[index], ...loanData };
+            } else {
+                loans.push(loanData);
+            }
+            resetForm();
+            saveData();
+        };
+
+        function deleteLoan(id, event) {
+            event.stopPropagation();
+            if (confirm("Excluir este empréstimo e seu histórico permanentemente?")) {
+                loans = loans.filter(l => l.id !== id);
+                transactions = transactions.filter(t => t.loanId !== id);
+                saveData();
+            }
+        }
+
+        function resetForm() {
+            document.getElementById('loanForm').reset();
+            document.getElementById('editId').value = "";
+            document.getElementById('formTitle').innerText = "Novo Empréstimo";
+            document.getElementById('btnSubmit').innerText = "Salvar Empréstimo";
+            document.getElementById('btnCancelEdit').classList.add('hidden');
+        }
+
+        function editLoan(id, event) {
+            event.stopPropagation();
+            const loan = loans.find(l => l.id === id);
+            document.getElementById('editId').value = loan.id;
+            document.getElementById('loanName').value = loan.name;
+            document.getElementById('loanValue').value = loan.principal;
+            document.getElementById('loanInterest').value = loan.interestRate;
+            document.getElementById('loanDate').value = loan.dueDate;
+            document.getElementById('loanPhone').value = loan.phone;
+            document.getElementById('formTitle').innerText = "Editando: " + loan.name;
+            document.getElementById('btnSubmit').innerText = "Atualizar";
+            document.getElementById('btnCancelEdit').classList.remove('hidden');
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        function openPayment(id, event) {
+            event.stopPropagation();
+            activeLoanId = id;
+            document.getElementById('payDate').value = new Date().toISOString().split('T')[0];
+            document.getElementById('modalPayment').style.display = 'flex';
+        }
+
+        function processPayment(type) {
+            const loan = loans.find(l => l.id === activeLoanId);
+            const date = document.getElementById('payDate').value;
+            let value = 0;
+
+            if (type === 'interest') {
+                value = (loan.principal * (loan.interestRate / 100));
+                loan.currentDueDate = addMonths(loan.currentDueDate, 1);
+            } else {
+                value = parseFloat(document.getElementById('payPrincipalAmount').value);
+                if (isNaN(value) || value <= 0) return alert("Valor inválido");
+                loan.principal -= value;
+                if (loan.principal <= 0) { loan.principal = 0; loan.active = false; }
+                else { loan.currentDueDate = addMonths(loan.currentDueDate, 1); }
+            }
+
+            transactions.push({ id: Date.now().toString(), loanId: activeLoanId, date, type: type === 'interest' ? 'Juros' : 'Amortização', value });
+            closeModals();
+            saveData();
+        }
+
+        function addMonths(dateStr, months) {
+            const d = new Date(dateStr + "T12:00:00");
+            d.setMonth(d.getMonth() + months);
+            return d.toISOString().split('T')[0];
+        }
+
+        function closeModals() { document.querySelectorAll('.modal-overlay').forEach(m => m.style.display = 'none'); }
+
+        function openHistory(id) {
+            activeLoanId = id;
+            const loan = loans.find(l => l.id === id);
+            const loanTrans = transactions.filter(t => t.loanId === id);
+            document.getElementById('historyName').innerText = loan.name;
+            document.getElementById('historyInfo').innerText = `Saldo: ${fmt(loan.principal)} | Taxa: ${loan.interestRate}%`;
+            document.getElementById('historyList').innerHTML = loanTrans.map(t => `
+                <div class="history-item">
+                    <div><b>${t.type}</b><br><small>${t.date.split('-').reverse().join('/')}</small></div>
+                    <div style="display:flex; align-items:center; gap:10px;">
+                        <span class="text-success">${fmt(t.value)}</span>
+                        <button class="btn-del-trans" onclick="deleteTransaction('${t.id}')">🗑</button>
+                    </div>
+                </div>
+            `).join('') || '<p>Sem histórico.</p>';
+            document.getElementById('historyTotal').innerText = fmt(loanTrans.reduce((acc, t) => acc + t.value, 0));
+            document.getElementById('modalHistory').style.display = 'flex';
+        }
+
+        function deleteTransaction(tId) {
+            if (!confirm("Reverter?")) return;
+            const t = transactions.find(tx => tx.id === tId);
+            const loan = loans.find(l => l.id === t.loanId);
+            if (t.type === 'Amortização') { loan.principal += t.value; loan.active = true; }
+            loan.currentDueDate = addMonths(loan.currentDueDate, -1);
+            transactions = transactions.filter(tx => tx.id !== tId);
+            saveData();
+            openHistory(loan.id);
+        }
+
+        function sendWhatsApp(id, event) {
+            event.stopPropagation();
+            const loan = loans.find(l => l.id === id);
+            const msg = `Olá ${loan.name}, lembrete do vencimento (${fmt(loan.principal * (loan.interestRate/100))}) em ${loan.currentDueDate.split('-').reverse().join('/')}`;
+            window.open(`https://api.whatsapp.com/send?phone=55${loan.phone}&text=${encodeURIComponent(msg)}`, '_blank');
+        }
+
+        function render() {
+            const currentMonthKey = viewDate.toISOString().substring(0, 7); 
+            document.getElementById('currentMonthDisplay').innerText = getMonthName(viewDate);
+            
+            // FILTRO CRUCIAL: Apenas empréstimos que já existiam (data de origem <= mês atual da view)
+            const loansValidForMonth = loans.filter(l => l.dueDate.substring(0, 7) <= currentMonthKey);
+
+            // 1. Ativo Total: Soma do principal de empréstimos que começaram até este mês e ainda estão ativos
+            const totalActive = loansValidForMonth.filter(l => l.active).reduce((acc, l) => acc + l.principal, 0);
+            
+            // 2. Juros Esperados: Juros sobre os empréstimos válidos ativos
+            const expectedInt = loansValidForMonth.filter(l => l.active).reduce((acc, l) => acc + (l.principal * (l.interestRate/100)), 0);
+            
+            // 3. Recebido no Mês: Transações que ocorreram EXATAMENTE neste mês
+            const receivedThisMonth = transactions
+                .filter(t => t.date.substring(0, 7) === currentMonthKey)
+                .reduce((acc, t) => acc + t.value, 0);
+
+            // 4. Emprestado no Mês: Empréstimos cujo início foi EXATAMENTE neste mês
+            const lentThisMonth = loans
+                .filter(l => l.dueDate.substring(0, 7) === currentMonthKey)
+                .reduce((acc, l) => acc + l.principal, 0);
+
+            document.getElementById('statTotalActive').innerText = fmt(totalActive);
+            document.getElementById('statExpectedInterest').innerText = fmt(expectedInt);
+            document.getElementById('statReceivedMonth').innerText = fmt(receivedThisMonth);
+            document.getElementById('statLentMonth').innerText = fmt(lentThisMonth);
+
+            const sortedLoans = [...loansValidForMonth].sort((a, b) => {
+                if (a.active !== b.active) return a.active ? -1 : 1;
+                return new Date(a.currentDueDate) - new Date(b.currentDueDate);
+            });
+
+            document.getElementById('loanList').innerHTML = sortedLoans.map(loan => {
+                const diffDays = Math.ceil((new Date(loan.currentDueDate + "T12:00:00") - new Date().setHours(0,0,0,0)) / 86400000);
+                let badge = loan.active ? (diffDays < 0 ? `<span class="status-badge badge-red">Atrasado ${Math.abs(diffDays)}d</span>` : (diffDays === 0 ? `<span class="status-badge badge-yellow">Hoje</span>` : `<span class="status-badge badge-green">Faltam ${diffDays}d</span>`)) : `<span class="status-badge badge-gray">Quitado</span>`;
+                
+                return `
+                    <div class="loan-card ${!loan.active ? 'paid' : (diffDays < 0 ? 'overdue' : '')}" onclick="openHistory('${loan.id}')">
+                        <div class="card-top">
+                            <div><div class="loan-name">${loan.name}</div>${badge}</div>
+                            <button class="btn-delete-loan" onclick="deleteLoan('${loan.id}', event)">🗑</button>
+                        </div>
+                        <div class="loan-details">
+                            <div>Principal: <b>${fmt(loan.principal)}</b></div>
+                            <div>Juros: <b>${fmt(loan.principal * (loan.interestRate/100))}</b></div>
+                            <div>Venc: <b>${loan.currentDueDate.split('-').reverse().join('/')}</b></div>
+                            <div>Taxa: <b>${loan.interestRate}%</b></div>
+                        </div>
+                        <div class="loan-actions">
+                            <button class="btn-sm" onclick="editLoan('${loan.id}', event)">✏️ Editar</button>
+                            ${loan.active ? `<button class="btn-sm btn-pay" onclick="openPayment('${loan.id}', event)">💰 Receber</button>
+                            <button class="btn-sm btn-wa" onclick="sendWhatsApp('${loan.id}', event)">💬 Cobrar</button>` : ''}
+                        </div>
+                    </div>`;
+            }).join('') || '<p style="text-align:center; padding: 20px; color: #94a3b8;">Nenhum empréstimo para este período.</p>';
+        }
+
+        render();
+    </script>
+</body>
+</html>
